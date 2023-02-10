@@ -4,18 +4,18 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const pool = new Pool({
-    user:     process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    host:     process.env.HOST,   
-    port:     process.env.DB_PORT,
-    database: process.env.DB_DATABASE
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  host: process.env.HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_DATABASE,
 });
 
 const poolnewdb = new Pool({
-  user:     process.env.DB_USER,
-  host:     process.env.HOST,
+  user: process.env.DB_USER,
+  host: process.env.HOST,
   password: process.env.DB_PASSWORD,
-  port:     process.env.DB_PORT,
+  port: process.env.DB_PORT,
 });
 
 console.log(process.env.DB_DATABASE);
@@ -24,7 +24,8 @@ const dbQuery = await poolnewdb.query(
   `SELECT FROM pg_database WHERE datname = $1`,
   [process.env.DB_DATABASE]
 );
-if (dbQuery.rows.length === 0) {// database does not exist, make it:
+if (dbQuery.rows.length === 0) {
+  // database does not exist, make it:
   await poolnewdb.query(`CREATE DATABASE ${process.env.DB_DATABASE}`);
   console.log(`Database ${process.env.DB_DATABASE} created!`);
 }
@@ -51,25 +52,23 @@ pool.query(
 // FUNCTIONS
 // ************************************
 
-
 // FUNCTION savehistory
 const savehistory = async (userid, command, text) => {
-
   const query = `INSERT INTO history (chatid, command, text)
                  VALUES ('${userid.toString()}', '${command}', '${text}');`;
-                 
+
   const client = await pool.connect();
   try {
-       const res = await client.query(query);
-       return true;
+    const res = await client.query(query);
+    return true;
   } catch (err) {
-       console.log(err.stack);
-       return false       
+    console.log(err.stack);
+    return false;
   } finally {
-       client.release();
+    client.release();
   }
 };
 
-pool.connect() // вроде работает и без него
+pool.connect(); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 
-export {pool, savehistory};
+export { pool, savehistory };
